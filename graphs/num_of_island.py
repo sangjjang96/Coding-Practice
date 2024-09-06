@@ -18,9 +18,6 @@ def bfs(x, y):
             if 0 <= nx < h and 0 <= ny < w and maps[nx][ny] == 1:
                 maps[nx][ny] = 0
                 q.append([nx, ny])
-            
-            
-        
 
 while True:
     try:
