@@ -1,25 +1,32 @@
 import sys
-import heapq
+from collections import deque
 
 T = int(sys.stdin.readline())
 
-N, M = list(map(int, sys.stdin.readline().split()))
+for i in range(T):
+    N, M = list(map(int, sys.stdin.readline().split()))
 
-script = list(map(int, sys.stdin.readline().split()))
+    script = list(map(int, sys.stdin.readline().split()))
 
-obj = script[M]
+    tmp = []
+    for idx, s in enumerate(script):
+        tmp.append([s, idx])
+        
+    q = deque(script)
+    q_ = deque([i for i in range(N)])
 
-q = []
+    result = []
 
-for s in script:
-    heapq.heappush(q, (-s, s))
+    while q:
+        maximum = max(q)
 
-print(q)
+        x = q.popleft()
+        idx = q_.popleft()
+        
+        if x == maximum:
+            result.append(idx)
+        else:
+            q.append(x)
+            q_.append(idx)
 
-out = []
-
-while q:
-    out.append(heapq.heappop(q))
-
-for i in range(len(out)):
-    if out[i][1] == 
+    print(result.index(M)+1)

@@ -1,65 +1,73 @@
 import sys
 from collections import deque
 
-def bfs(answer, num_eat, shark_size, num_fish):
-    
-    while q:
-        x, y = q.popleft()
-        
-        for i in range(4):
-            x_ = x + dx[i]
-            y_ = y + dy[i]
-            
-            if 0 <= x_ < N and 0 <= y_ < N and space[x_][y_] in [0, 1, 2, 3, 4, 5, 6]:
-                if space[x_][y_] == 0:
-                    space[x][y] = 0
-                    space[x_][y_] = 9
-                    answer += 1
-                    q.append([x_, y_])
-                else:
-                    if shark_size >= space[x_][y_]:
-                        num_eat += space[x_][y_]
-                        if num_eat >= shark_size:
-                            num_eat -= shark_size
-                            shark_size += 1
-                        
-                        space[x][y] = 0
-                        space[x_][y_] = 9
-                        num_fish -= 1
-                        break
-    
-    return answer, num_eat, shark_size, num_fish
-
 dx = [-1, 0, 0, 1]
 dy = [0, -1, 1, 0]
 
+n = int(sys.stdin.readline())
 
-N = int(sys.stdin.readline())
+maps = [list(map(int, sys.stdin.readline().split())) for _ in range(n)]
 
-answer = 0
-space = []
-shark_size = 2
-num_eat = 0
+for i in range(n):
+    for j in range(n):
+        if maps[i][j] == 9:
+            shark_x, shark_y = i, j
 
-for _ in range(N):
-    space.append(list(map(int, sys.stdin.readline().split())))
+            
+def bfs(x, y):
+    visited = [[0]*n for _ in range(n)]
+    queue = deque([[x,y]])
+    cand = []
+
+    visited[x][y] = 1
+
+    while queue:
+        i, j = queue.popleft()
+
+        for idx in range(4):
+            ii, jj = i + dx[idx] , j + dy[idx]
+
+            if 0 <= ii and ii < n and 0 <= jj and jj < n and visited[ii][jj] == 0:
+
+                if maps[x][y] > maps[ii][jj] and maps[ii][jj] != 0:
+                    visited[ii][jj] =  visited[i][j] + 1
+                    cand.append((visited[ii][jj] - 1, ii, jj))
+                elif maps[x][y] == maps[ii][jj]:
+                    visited[ii][jj] =  visited[i][j] + 1
+                    queue.append([ii,jj])
+                elif maps[ii][jj] == 0:
+                    visited[ii][jj] =  visited[i][j] + 1
+                    queue.append([ii,jj])
+                    
+
+    return sorted(cand, key = lambda x: (x[0], x[1], x[2]))
     
-q = deque([])
-
-num_fish = 0
-
-for i in range(N):
-    for j in range(N):
-        if space[i][j] in [1, 2, 3, 4, 5, 6]:
-            num_fish += 1
-
-while num_fish > 0:
-    for i in range(N):
-        for j in range(N):
-            if space[i][j] == 9:
-                q.append([i, j])
-                answer, num_eat, shark_size, num_fish = bfs(answer, num_eat, shark_size, num_fish)
-                
-    print(num_fish)
     
-print(answer)
+def search(x, y):
+    return bfs(x, y)
+
+cnt = 0
+i, j = shark_x, shark_y
+size = [2, 0]
+
+while True:
+    maps[i][j] = size[0]
+    cand = deque(bfs(i,j))
+    
+    if not cand:
+        break
+        
+
+    step, xx, yy = cand.popleft()
+    cnt += step
+    size[1] += 1
+    
+
+    if size[0] == size[1]:
+        size[0] += 1
+        size[1] = 0
+
+    maps[i][j] = 0
+    i, j = xx, yy
+        
+print(cnt)
