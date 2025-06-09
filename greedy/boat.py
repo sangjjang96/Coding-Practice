@@ -8,24 +8,24 @@ m = int(input())
 
 boxes = list(map(int, sys.stdin.readline().split()))
 
+todos = [[] for _ in range(n)]
+
 if max(boxes) > max(cranes):
     print(-1)
 else:
-    cranes.sort()
-    boxes.sort()
+    cnt = 0
     
-    box_avail = []
+    cranes.sort(reverse=True)
+    boxes.sort(reverse=True)
     
-    idx = 0
-    for i in range(len(boxes)):
-        if boxes[i] > cranes[idx]:
-            box_avail.append(i)
-            idx += 1
-            
-    if len(box_avail) != len(cranes):
-        for _ in range(len(cranes) - len(box_avail)):
-            box_avail.append(len(boxes))
+    while boxes:
+        for c in cranes:
+            if boxes and c < boxes[-1]:
+                continue
+            for b in boxes:
+                if c >= b:
+                    boxes.remove(b)
+                    break
+        cnt += 1
     
-    print(cranes)
-    print(box_avail)
-    print(boxes)
+    print(cnt)
