@@ -3,13 +3,22 @@ import sys
 n = int(input())
 k = int(input())
 
-arr = [[0]*n for _ in range(n)]
+s = 0
+e = k
 
-for i in range(1, n+1):
-    for j in range(1, n+1):
-        arr[i-1][j-1] = i*j
+while s <= e:
+    m = (s + e) // 2
+    cnt = 0
+    
+    for i in range(1, n+1):
+        cnt += min(m//i, n)
 
-for a in arr:
-    print(a)
+    if cnt >= k:
+        result = m
+        e = m - 1
+    else:
+        s = m + 1
 
-print((k//n + 1) * (k%n + 1))
+print(result)
+    
+    
